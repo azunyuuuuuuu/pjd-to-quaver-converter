@@ -61,7 +61,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     case 0x06: // param count 7 // note
                         var note = new Note
                         {
-                            Timestamp = currenttime + TimeSpan.FromSeconds(1),
+                            Timestamp = currenttime + TimeSpan.FromSeconds(1.5),
                             Button = (Note.ButtonsEnum)reader.ReadInt32(),
                             TargetPosX = reader.ReadInt32(),
                             TargetPosY = reader.ReadInt32(),
@@ -184,6 +184,41 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     default:
                         throw new CommandException($"Unknown Opcode {opcode} at {reader.BaseStream.Position}");
                 }
+            }
+
+            // write file
+            // if (File.Exists(OutputPath))
+            //     File.Delete(OutputPath);
+            using var writer = new StreamWriter(OutputPath);
+            await writer.WriteLineAsync($"AudioFile: {Path.GetFileName(AudioFile)}");
+
+            // await writer.WriteLineAsync($"SongPreviewTime: 41700");
+            // await writer.WriteLineAsync($"BackgroundFile: paralysis bg.png");
+            // await writer.WriteLineAsync($"BannerFile: paralysis bn.png");
+            await writer.WriteLineAsync($"MapId: -1");
+            await writer.WriteLineAsync($"MapSetId: -1");
+
+            await writer.WriteLineAsync($"Mode: Keys4");
+            await writer.WriteLineAsync($"Title: {Title}");
+            await writer.WriteLineAsync($"Artist: {Artist}");
+            await writer.WriteLineAsync($"Creator: {Creator}");
+            await writer.WriteLineAsync($"DifficultyName: {Difficulty}");
+
+            await writer.WriteLineAsync($"EditorLayers: []");
+            await writer.WriteLineAsync($"CustomAudioSamples: []");
+
+            await writer.WriteLineAsync($"SoundEffects: []");
+
+            await writer.WriteLineAsync($"TimingPoints:");
+            await writer.WriteLineAsync($"- Bpm: {Bpm}");
+            await writer.WriteLineAsync($"SliderVelocities: []");
+
+            await writer.WriteLineAsync($"HitObjects:");
+            foreach (var note in notes)
+            {
+                await writer.WriteLineAsync($"- StartTime: {note.Timestamp.TotalMilliseconds}");
+                await writer.WriteLineAsync($"  Lane: {((int)note.Button) + 1}");
+                await writer.WriteLineAsync($"  KeySounds: []");
             }
         }
     }
