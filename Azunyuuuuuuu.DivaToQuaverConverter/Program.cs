@@ -13,12 +13,44 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         public static async Task<int> Main() =>
             await new CliApplicationBuilder()
                 .AddCommandsFromThisAssembly()
+                .AllowPreviewMode(true)
                 .Build()
                 .RunAsync();
     }
 
-    [Command(Description = "Converts script files from Project Diva to Quaver.")]
-    public class ConvertCommand : ICommand
+    [Command("dsc", Description = "Converts a .dsc file to .qua.")]
+    public class ConvertDscFile : ICommand
+    {
+        [CommandOption("input", 'i')]
+        public string InputFile { get; set; }
+
+        [CommandOption("output", 'o')]
+        public string OutputPath { get; set; }
+        [CommandOption("audio")]
+        public string AudioFile { get; set; }
+
+        [CommandOption("title", 't')]
+        public string Title { get; set; }
+
+        [CommandOption("artist", 'a')]
+        public string Artist { get; set; }
+
+        [CommandOption("creator", 'c')]
+        public string Creator { get; set; } = "SEGA";
+
+        [CommandOption("difficulty", 'd')]
+        public string Difficulty { get; set; } = "Normal";
+
+        [CommandOption("bpm", 'b')]
+        public int Bpm { get; set; } = 80;
+
+        public async ValueTask ExecuteAsync(IConsole console)
+        {
+        }
+    }
+
+    [Command("db", Description = "Converts script files from Project Diva to Quaver.")]
+    public class ConvertDatabaseCommand : ICommand
     {
         [CommandOption("source", 's', Description = "Path to the source files.")]
         public string SourcePath { get; set; } = "input";
