@@ -45,6 +45,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             int opcode = 0;
             TimeSpan currenttime = TimeSpan.Zero;
 
+            var notes = new List<Note>();
+
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 opcode = reader.ReadInt32();
@@ -68,6 +70,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                             Unknown7 = reader.ReadInt32(),
                         };
 
+                        notes.Add(note);
                         await console.Output.WriteLineAsync($"{note.Timestamp}, {note.Button}");
                         break;
 
