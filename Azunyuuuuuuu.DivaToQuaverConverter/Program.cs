@@ -65,8 +65,17 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 SongFile = pv.First(x => x.Key == "song_file_name").Value,
                 Artist = pv.First(x => x.Key == "songinfo.music").Value,
                 Bpm = pv.First(x => x.Key == "bpm").Value,
+                Scripts = GetScriptFiles(pv),
             }));
         }
+
+        private List<ScriptFile> GetScriptFiles(IGrouping<string, KeyValuePair<string, string>> pv)
+            => pv.Where(x => x.Key.EndsWith("script_file_name"))
+                .Select(x => new ScriptFile
+                {
+                    Difficulty = x.Key.Split('.')[1].UppercaseFirst(),
+                    File = x.Value,
+                }).ToList();
     }
 
     internal class Song
@@ -76,5 +85,22 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         public string SongFile { get; set; }
         public string Artist { get; set; }
         public string Bpm { get; set; }
+        public List<ScriptFile> Scripts { get; set; }
+    }
+
+    internal class ScriptFile
+    {
+        public string File { get; set; }
+        public string Difficulty { get; set; }
+    }
+
+    internal static class ExtensionMethods
+    {
+        public static string UppercaseFirst(this string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+            return char.ToUpper(input[0]) + input.Substring(1);
+        }
     }
 }
