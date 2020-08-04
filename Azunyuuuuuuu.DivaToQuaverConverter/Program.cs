@@ -26,13 +26,29 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         [CommandOption("destination", 'd', Description = "Path to where the converted files will be written to.")]
         public string DestinationPath { get; set; } = "output";
 
-        private Dictionary<string, string> database = new Dictionary<string, string>();
+        private List<string> database = new List<string>();
 
         public async ValueTask ExecuteAsync(IConsole console)
         {
             console.Output.WriteLine($"Converting files from '{SourcePath}'");
 
             await LoadDbFilesIntoMemory();
+
+            // parse pv_* data
+            var pvs = database.Where(x => x.StartsWith("pv_"))
+                .GroupBy(x => x.Split('.').First(), x => KeyValuePair.Create(x.Split('.',2)[1].Split('=').First(), x.Split('=',2).Last()));
+
+            foreach (var pv in pvs)
+            {
+                var temp = new
+                {
+                    Id = pv.Key,
+                    Name = pv.First(x => x.Key == "song_name").Value,
+                    SongFile = pv.First(x => x.Key == "song_file_name").Value,
+                    Artist = pv.First(x => x.Key == "songinfo.music").Value,
+                    Bpm = pv.First(x => x.Key == "bpm").Value,
+                };
+            }
         }
 
         private async Task LoadDbFilesIntoMemory()
@@ -41,12 +57,12 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
             foreach (var filepath in dbfilepaths)
             {
-                var lines = (await File.ReadAllLinesAsync(filepath))
-                    .Where(x => !x.StartsWith('#'))
-                    .Select(x => x.Split('='));
+                var temp = (await File.ReadAllLinesAsync(filepath))
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Where(x => !x.StartsWith('#'));
 
-                foreach (var line in lines)
-                    database.TryAdd(line[0], line[1]);
+                database.AddRange(temp);
             }
         }
     }
