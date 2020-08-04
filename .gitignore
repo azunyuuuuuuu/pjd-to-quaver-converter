@@ -1,4 +1,6 @@
 testdata/
+input/
+output/
 
 # Created by https://www.toptal.com/developers/gitignore/api/csharp,dotnetcore,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=csharp,dotnetcore,visualstudiocode
