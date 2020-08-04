@@ -13,7 +13,6 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         public static async Task<int> Main() =>
             await new CliApplicationBuilder()
                 .AddCommandsFromThisAssembly()
-                .AllowPreviewMode(true)
                 .Build()
                 .RunAsync();
     }
