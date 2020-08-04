@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using CliFx;
@@ -60,7 +61,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     case 0x06: // param count 7 // note
                         var note = new Note
                         {
-                            Timestamp = currenttime,
+                            Timestamp = currenttime + TimeSpan.FromSeconds(1),
                             Button = (Note.ButtonsEnum)reader.ReadInt32(),
                             TargetPosX = reader.ReadInt32(),
                             TargetPosY = reader.ReadInt32(),
