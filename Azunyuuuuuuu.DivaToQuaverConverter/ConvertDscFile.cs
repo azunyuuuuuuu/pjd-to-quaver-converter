@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
 using CliFx.Exceptions;
+using Quaver.API.Enums;
+using Quaver.API.Maps.Structures;
 
 namespace Azunyuuuuuuu.DivaToQuaverConverter
 {
@@ -186,40 +189,28 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 }
             }
 
-            // write file
-            // if (File.Exists(OutputPath))
-            //     File.Delete(OutputPath);
-            using var writer = new StreamWriter(OutputPath);
-            await writer.WriteLineAsync($"AudioFile: {Path.GetFileName(AudioFile)}");
+            var qua = new Quaver.API.Maps.Qua();
+            qua.Title = Title;
+            qua.Artist = Artist;
+            qua.Creator = Creator;
+            qua.DifficultyName = Difficulty;
 
-            // await writer.WriteLineAsync($"SongPreviewTime: 41700");
-            // await writer.WriteLineAsync($"BackgroundFile: paralysis bg.png");
-            // await writer.WriteLineAsync($"BannerFile: paralysis bn.png");
-            await writer.WriteLineAsync($"MapId: -1");
-            await writer.WriteLineAsync($"MapSetId: -1");
-
-            await writer.WriteLineAsync($"Mode: Keys4");
-            await writer.WriteLineAsync($"Title: {Title}");
-            await writer.WriteLineAsync($"Artist: {Artist}");
-            await writer.WriteLineAsync($"Creator: {Creator}");
-            await writer.WriteLineAsync($"DifficultyName: {Difficulty}");
-
-            await writer.WriteLineAsync($"EditorLayers: []");
-            await writer.WriteLineAsync($"CustomAudioSamples: []");
-
-            await writer.WriteLineAsync($"SoundEffects: []");
-
-            await writer.WriteLineAsync($"TimingPoints:");
-            await writer.WriteLineAsync($"- Bpm: {Bpm}");
-            await writer.WriteLineAsync($"SliderVelocities: []");
-
-            await writer.WriteLineAsync($"HitObjects:");
-            foreach (var note in notes)
+            qua.AudioFile = Path.GetFileName(AudioFile);
+            qua.Mode = GameMode.Keys4;
+            qua.TimingPoints.Add(new Quaver.API.Maps.Structures.TimingPointInfo
             {
-                await writer.WriteLineAsync($"- StartTime: {note.Timestamp.TotalMilliseconds}");
-                await writer.WriteLineAsync($"  Lane: {((int)note.Button) + 1}");
-                await writer.WriteLineAsync($"  KeySounds: []");
-            }
+                Bpm = Bpm
+            });
+
+            qua.HitObjects.AddRange(notes.Select(note => new HitObjectInfo
+            {
+                StartTime = (int)note.Timestamp.TotalMilliseconds,
+                Lane = note.Button.GetLane(),
+            }));
+
+            Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
+
+            qua.Save(OutputPath);
         }
     }
 
