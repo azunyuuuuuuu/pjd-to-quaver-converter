@@ -43,8 +43,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             using var reader = new BinaryReader(File.OpenRead(InputFile));
 
             // TODO: This could later be used to identify the version maybe?!
-            if (reader.ReadInt32() != 0x14050921)
-                throw new CommandException("Unexpected Magic Number");
+            reader.ReadInt32();
 
             int opcode = 0;
             TimeSpan currenttime = TimeSpan.Zero;
