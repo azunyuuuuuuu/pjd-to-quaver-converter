@@ -49,7 +49,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             await console.Output.WriteLineAsync($" - Gathering database entries...");
             var db = Directory.EnumerateFiles(InputPath, "*.txt", SearchOption.AllDirectories)
                 .Select(file => File.ReadAllText(file))
-                .SelectMany(text => Regex.Matches(text, @"^(pv_\d{3})\.(.*?)=(.*)?$", RegexOptions.Multiline));
+                .SelectMany(text => Regex.Matches(text, @"^(pv_\d{3})\.(.*?)=(.*)?$", RegexOptions.Multiline))
+                .Where(x => x.Groups[2].Value == "song_name" || x.Groups[2].Value == "songinfo.music" || x.Groups[2].Value == "bpm");
             await console.Output.WriteLineAsync($"   Found {db.Count()} entries");
 
             var dbpvs = db.GroupBy(x => x.Groups[1].Value).Select(x => x.Key);
@@ -72,7 +73,9 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                             ScriptPath = dsc.Path,
                             Difficulty = dsc.Difficulty,
                         }).ToList(),
-                }).ToList();
+                });
+            foreach (var item in songs)
+                await console.Output.WriteLineAsync($"   found song {item.Title} by {item.Artist}");
             await console.Output.WriteLineAsync($"   Combined data for {songs.Count()} songs");
         }
     }
