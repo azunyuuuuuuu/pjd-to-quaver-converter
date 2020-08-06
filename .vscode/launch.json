@@ -13,7 +13,7 @@
             "program": "${workspaceFolder}/Azunyuuuuuuu.DivaToQuaverConverter/bin/Debug/netcoreapp3.1/Azunyuuuuuuu.DivaToQuaverConverter.dll",
             "args": [
                 "all",
-                "C:\\Users\\dotne\\Desktop\\gamebox\\pdm39s",
+                "input",
                 "output",
             ],
             "cwd": "${workspaceFolder}",
