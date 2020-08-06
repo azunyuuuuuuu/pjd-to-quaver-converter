@@ -23,7 +23,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
         public async ValueTask ExecuteAsync(IConsole console)
         {
-            // get .dsc file metadata
+            await console.Output.WriteLineAsync($" - Gathering .dsc files...");
             var dscfiles = Directory.EnumerateFiles(InputPath, "*.dsc", SearchOption.AllDirectories)
                 .Where(dsc => Regex.IsMatch(dsc, _regexdscfiles))
                 .Select(dsc => new
@@ -32,7 +32,10 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     Path = dsc,
                     Difficulty = Path.GetFileName(dsc).MatchRegex(_regexdscfiles, 2).ToTitleCase(),
                 });
+            await console.Output.WriteLineAsync($"   Found {dscfiles.Count()} files");
 
+
+            await console.Output.WriteLineAsync($" - Gathering song files (.ogg) files...");
             var audiofiles = Directory.EnumerateFiles(InputPath, "*.ogg", SearchOption.AllDirectories)
                 .Where(audio => Regex.IsMatch(audio, _regexoggfiles))
                 .Select(audio => new
@@ -40,13 +43,20 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     Path = audio,
                     Pv = Path.GetFileName(audio).MatchRegex(_regexoggfiles, 1),
                 });
+            await console.Output.WriteLineAsync($"   Found {audiofiles.Count()} files");
 
+
+            await console.Output.WriteLineAsync($" - Gathering database entries...");
             var db = Directory.EnumerateFiles(InputPath, "*.txt", SearchOption.AllDirectories)
                 .Select(file => File.ReadAllText(file))
                 .SelectMany(text => Regex.Matches(text, @"^(pv_\d{3})\.(.*?)=(.*)?$", RegexOptions.Multiline));
+            await console.Output.WriteLineAsync($"   Found {db.Count()} entries");
 
             var dbpvs = db.GroupBy(x => x.Groups[1].Value).Select(x => x.Key);
+            await console.Output.WriteLineAsync($"   Found {dbpvs.Count()} individual songs in the database");
 
+
+            await console.Output.WriteLineAsync($" - Combining all data...");
             var songs = audiofiles
                 .Where(audio => dbpvs.Contains(audio.Pv))
                 .Select(audio => new
@@ -63,6 +73,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                             Difficulty = dsc.Difficulty,
                         }).ToList(),
                 }).ToList();
+            await console.Output.WriteLineAsync($"   Combined data for {songs.Count()} songs");
         }
     }
 }
