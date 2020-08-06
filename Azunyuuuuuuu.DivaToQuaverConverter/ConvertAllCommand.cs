@@ -31,7 +31,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     Pv = Path.GetFileName(dsc).MatchRegex(_regexdscfiles, 1),
                     Path = dsc,
                     Difficulty = Path.GetFileName(dsc).MatchRegex(_regexdscfiles, 2).ToTitleCase(),
-                });
+                }).ToList();
             await console.Output.WriteLineAsync($"   Found {dscfiles.Count()} files");
 
 
@@ -42,7 +42,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 {
                     Path = audio,
                     Pv = Path.GetFileName(audio).MatchRegex(_regexoggfiles, 1),
-                });
+                }).ToList();
             await console.Output.WriteLineAsync($"   Found {audiofiles.Count()} files");
 
 
@@ -50,22 +50,33 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             var db = Directory.EnumerateFiles(InputPath, "*.txt", SearchOption.AllDirectories)
                 .Select(file => File.ReadAllText(file))
                 .SelectMany(text => Regex.Matches(text, @"^(pv_\d{3})\.(.*?)=(.*)?$", RegexOptions.Multiline))
-                .Where(x => x.Groups[2].Value == "song_name" || x.Groups[2].Value == "songinfo.music" || x.Groups[2].Value == "bpm");
+                .Select(x => new
+                {
+                    Group = x.Groups[1].Value.Trim(),
+                    Property = x.Groups[2].Value.Trim(),
+                    Value = x.Groups[3].Value.Trim(),
+                })
+                // .Where(x => x.Property == "song_name" || x.Property == "songinfo.music" || x.Property == "bpm")
+                .GroupBy(x => x.Group)
+                .Where(x => x.FirstOrDefault(c => c.Property == "song_name") != null)
+                .Select(x => new
+                {
+                    Group = x.Key,
+                    SongName = x.FirstOrDefault(c => c.Property == "song_name").Value,
+                    Artist = x.FirstOrDefault(c => c.Property == "songinfo.music").Value,
+                    Bpm = x.FirstOrDefault(c => c.Property == "bpm").Value,
+                }).OrderBy(x => x.Group).ToList();
             await console.Output.WriteLineAsync($"   Found {db.Count()} entries");
-
-            var dbpvs = db.GroupBy(x => x.Groups[1].Value).Select(x => x.Key);
-            await console.Output.WriteLineAsync($"   Found {dbpvs.Count()} individual songs in the database");
-
 
             await console.Output.WriteLineAsync($" - Combining all data...");
             var songs = audiofiles
-                .Where(audio => dbpvs.Contains(audio.Pv))
+                .Where(audio => db.Where(x => x.Group == audio.Pv).Count() == 1)
                 .Select(audio => new
                 {
                     Id = audio.Pv,
-                    Title = db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "song_name").Groups[3].Value.Trim(),
-                    Artist = db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "songinfo.music").Groups[3].Value.Trim(),
-                    Bpm = db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "bpm").Groups[3].Value.Trim(),
+                    Title = db.FirstOrDefault(entry => entry.Group == audio.Pv).SongName,
+                    Artist = db.FirstOrDefault(entry => entry.Group == audio.Pv).Artist,
+                    Bpm = db.FirstOrDefault(entry => entry.Group == audio.Pv).Bpm,
                     AudioPath = audio.Path,
                     ScriptFiles = dscfiles.Where(dsc => audio.Pv == dsc.Pv)
                         .Select(dsc => new
