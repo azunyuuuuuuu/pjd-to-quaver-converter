@@ -43,22 +43,26 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
             var db = Directory.EnumerateFiles(InputPath, "*.txt", SearchOption.AllDirectories)
                 .Select(file => File.ReadAllText(file))
-                .Select(text => Regex.Matches(text, @"^(pv_\d{3})\.(.*?)=(.*)?$", RegexOptions.Multiline));
+                .SelectMany(text => Regex.Matches(text, @"^(pv_\d{3})\.(.*?)=(.*)?$", RegexOptions.Multiline));
 
-            var songs = audiofiles.Select(audio => new
-            {
-                Id = audio.Pv,
-                Title = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "song_name").Groups[3].Value).FirstOrDefault().Trim(),
-                Artist = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "songinfo.music").Groups[3].Value).FirstOrDefault().Trim(),
-                Bpm = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "bpm").Groups[3].Value).FirstOrDefault().Trim(),
-                AudioPath = audio.Path,
-                ScriptFiles = dscfiles.Where(dsc => audio.Pv == dsc.Pv)
-                    .Select(dsc => new
-                    {
-                        ScriptPath = dsc.Path,
-                        Difficulty = dsc.Difficulty,
-                    }).ToList(),
-            });
+            var dbpvs = db.GroupBy(x => x.Groups[1].Value).Select(x => x.Key);
+
+            var songs = audiofiles
+                .Where(audio => dbpvs.Contains(audio.Pv))
+                .Select(audio => new
+                {
+                    Id = audio.Pv,
+                    Title = db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "song_name").Groups[3].Value.Trim(),
+                    // Artist = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "songinfo.music").Groups[3].Value).FirstOrDefault().Trim(),
+                    // Bpm = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "bpm").Groups[3].Value).FirstOrDefault().Trim(),
+                    AudioPath = audio.Path,
+                    ScriptFiles = dscfiles.Where(dsc => audio.Pv == dsc.Pv)
+                        .Select(dsc => new
+                        {
+                            ScriptPath = dsc.Path,
+                            Difficulty = dsc.Difficulty,
+                        }).ToList(),
+                }).ToList();
         }
     }
 }
