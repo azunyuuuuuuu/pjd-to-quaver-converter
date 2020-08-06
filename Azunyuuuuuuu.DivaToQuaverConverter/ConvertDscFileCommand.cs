@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +12,7 @@ using Quaver.API.Maps.Structures;
 namespace Azunyuuuuuuu.DivaToQuaverConverter
 {
     [Command("dsc", Description = "Converts a .dsc file to .qua.")]
-    public class ConvertDscFile : ICommand
+    public class ConvertDscFileCommand : ICommand
     {
         [CommandOption("input", 'i')]
         public string InputFile { get; set; }
