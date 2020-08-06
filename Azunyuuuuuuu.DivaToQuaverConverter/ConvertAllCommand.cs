@@ -48,9 +48,9 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             var songs = audiofiles.Select(audio => new
             {
                 Id = audio.Pv,
-                Title = db.Select(x => x.FirstOrDefault(x => x.Groups[1].Value == audio.Pv && x.Groups[2].Value == "song_name").Groups[3].Value).FirstOrDefault().Trim(),
-                Artist = db.Select(x => x.FirstOrDefault(x => x.Groups[1].Value == audio.Pv && x.Groups[2].Value == "songinfo.music").Groups[3].Value).FirstOrDefault().Trim(),
-                Bpm = db.Select(x => x.FirstOrDefault(x => x.Groups[1].Value == audio.Pv && x.Groups[2].Value == "bpm").Groups[3].Value).FirstOrDefault().Trim(),
+                Title = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "song_name").Groups[3].Value).FirstOrDefault().Trim(),
+                Artist = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "songinfo.music").Groups[3].Value).FirstOrDefault().Trim(),
+                Bpm = db.Select(db => db.FirstOrDefault(entry => entry.Groups[1].Value == audio.Pv && entry.Groups[2].Value == "bpm").Groups[3].Value).FirstOrDefault().Trim(),
                 AudioPath = audio.Path,
                 ScriptFiles = dscfiles.Where(dsc => audio.Pv == dsc.Pv)
                     .Select(dsc => new
