@@ -1,10 +1,11 @@
+using System.Text.RegularExpressions;
 using static Azunyuuuuuuu.DivaToQuaverConverter.Note;
 
 namespace Azunyuuuuuuu.DivaToQuaverConverter
 {
     internal static class ExtensionMethods
     {
-        public static string UppercaseFirst(this string input)
+        public static string ToTitleCase(this string input)
         {
             if (string.IsNullOrEmpty(input))
                 return string.Empty;
@@ -31,5 +32,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     return 0;
             }
         }
+
+        public static string MatchRegex(this string input, string pattern, int group = 0)
+            => Regex.Match(input, pattern).Groups[group].Value;
     }
 }
