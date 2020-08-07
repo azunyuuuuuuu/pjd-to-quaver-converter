@@ -59,6 +59,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 // .Where(x => x.Property == "song_name" || x.Property == "songinfo.music" || x.Property == "bpm")
                 .GroupBy(x => x.Group)
                 .Where(x => x.FirstOrDefault(c => c.Property == "song_name") != null)
+                .Where(x => audiofiles.FirstOrDefault(c => c.Pv == x.Key) != null)
                 .Select(x => new
                 {
                     Group = x.Key,
