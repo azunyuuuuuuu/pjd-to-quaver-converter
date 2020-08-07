@@ -96,8 +96,10 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             console.Output.WriteLine($" - Converting all .dsc to .qua ...");
             foreach (var song in songs)
             {
+                console.Output.WriteLine($"   Song {song.Title}");
                 foreach (var script in song.ScriptFiles)
                 {
+                    console.Output.WriteLine($"     Difficulty {script.Difficulty}");
                     using var reader = new BinaryReader(File.OpenRead(script.ScriptPath));
 
                     var magicnumber = reader.ReadInt32(); // the magic number perhaps?
@@ -131,7 +133,6 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                                 };
 
                                 notes.Add(note);
-                                console.Output.WriteLine($"   ~ {note.Timestamp}, {note.Button}, {note.Unknown6}, {note.Unknown7}");
                                 break;
 
                             case 0x00: reader.ReadBytes(4 * 0); break; // param count 0
@@ -245,8 +246,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                         }
                     }
 
-                    var outputpath = Path.Combine(OutputPath, song.Title, $"{song.Id}_{script.Difficulty}.qua");
-                    var audiooutputpath = Path.Combine(OutputPath, song.Title, $"{song.Id}.ogg");
+                    var outputpath = Path.Combine(OutputPath, song.Id, $"{song.Id}_{script.Difficulty}.qua");
+                    var audiooutputpath = Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg");
 
                     var qua = new Quaver.API.Maps.Qua();
                     qua.Title = song.Title;
