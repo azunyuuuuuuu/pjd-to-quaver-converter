@@ -13,8 +13,8 @@
             "program": "${workspaceFolder}/Azunyuuuuuuu.DivaToQuaverConverter/bin/Debug/netcoreapp3.1/Azunyuuuuuuu.DivaToQuaverConverter.dll",
             "args": [
                 "all",
-                "input",
-                "output",
+                "input/",
+                "output/",
             ],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
