@@ -5,13 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug convert whole database",
+            "name": "Debug convert all .dsc files",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/Azunyuuuuuuu.DivaToQuaverConverter/bin/Debug/netcoreapp3.1/Azunyuuuuuuu.DivaToQuaverConverter.dll",
-            "args": [],
+            "args": [
+                "all",
+                "input/",
+                "output/",
+            ],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
