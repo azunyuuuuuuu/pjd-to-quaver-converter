@@ -12,21 +12,21 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             return char.ToUpper(input[0]) + input.Substring(1);
         }
 
-        public static int GetLane(this ButtonsEnum button)
+        public static int GetLane(this ButtonEnum button)
         {
             switch (button)
             {
-                case ButtonsEnum.Square:
-                case ButtonsEnum.SquareHold:
+                case ButtonEnum.Square:
+                case ButtonEnum.SquareHold:
                     return 1;
-                case ButtonsEnum.Cross:
-                case ButtonsEnum.CrossHold:
+                case ButtonEnum.Cross:
+                case ButtonEnum.CrossHold:
                     return 2;
-                case ButtonsEnum.Triangle:
-                case ButtonsEnum.TriangleHold:
+                case ButtonEnum.Triangle:
+                case ButtonEnum.TriangleHold:
                     return 3;
-                case ButtonsEnum.Circle:
-                case ButtonsEnum.CircleHold:
+                case ButtonEnum.Circle:
+                case ButtonEnum.CircleHold:
                     return 4;
                 default:
                     return 0;

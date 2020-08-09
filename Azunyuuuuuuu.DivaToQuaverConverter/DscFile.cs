@@ -1,54 +1,72 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using CliFx;
-using CliFx.Attributes;
-using CliFx.Exceptions;
 using Quaver.API.Enums;
+using Quaver.API.Maps;
 using Quaver.API.Maps.Structures;
 
 namespace Azunyuuuuuuu.DivaToQuaverConverter
 {
-    [Command("dsc", Description = "Converts a .dsc file to .qua.")]
-    public class ConvertDscFileCommand : ICommand
+    internal class DscFile
     {
-        [CommandOption("input", 'i')]
-        public string InputFile { get; set; }
-
-        [CommandOption("output", 'o')]
-        public string OutputPath { get; set; }
-        [CommandOption("audio")]
-        public string AudioFile { get; set; }
-
-        [CommandOption("title", 't')]
-        public string Title { get; set; }
-
-        [CommandOption("artist", 'a')]
-        public string Artist { get; set; }
-
-        [CommandOption("creator", 'c')]
-        public string Creator { get; set; } = "SEGA";
-
-        [CommandOption("difficulty", 'd')]
-        public string Difficulty { get; set; } = "Normal";
-
-        [CommandOption("bpm", 'b')]
-        public int Bpm { get; set; } = 80;
-
-        public async ValueTask ExecuteAsync(IConsole console)
+        public DscFile(byte[] bytes)
         {
-            // get file handle
-            using var reader = new BinaryReader(File.OpenRead(InputFile));
+            _rawbytes = bytes;
+        }
 
-            // TODO: This could later be used to identify the version maybe?!
-            reader.ReadInt32();
+        private byte[] _rawbytes;
 
-            int opcode = 0;
-            TimeSpan currenttime = TimeSpan.Zero;
+        public static DscFile LoadFile(string path)
+            => new DscFile(File.ReadAllBytes(path));
 
-            var notes = new List<Note>();
+        public static Qua ToQua(
+            string title,
+            string artist,
+            string audiofile,
+            int bpm,
+            IEnumerable<Note> notes,
+            string creator = "SEGA",
+            string source = "Project Diva",
+            string difficulty = "Not defined")
+        {
+            var qua = new Qua()
+            {
+                Title = title,
+                Artist = artist,
+                AudioFile = audiofile,
+                Creator = creator,
+                Source = source,
+                Mode = GameMode.Keys4,
+                DifficultyName = difficulty,
+            };
+
+            qua.TimingPoints.Add(new TimingPointInfo { Bpm = bpm });
+            qua.HitObjects.AddRange(notes
+                .Select(note => new HitObjectInfo
+                {
+                    StartTime = (int)note.Timestamp.TotalMilliseconds,
+                    Lane = note.Button.GetLane(),
+                }));
+
+            return qua;
+        }
+
+        public static Qua ToQua(
+            SongMetadata song,
+            DscFileMetadata script,
+            string creator = "SEGA",
+            string source = "Project Diva")
+            => ToQua(song.Title, song.Artist, Path.GetFileName(Path.GetFileName(song.AudioPath)), (int)song.Bpm,
+                DscFile.LoadFile(script.Path).GetAllNotes(), creator, source, script.Difficulty);
+
+        public IEnumerable<Note> GetAllNotes()
+        {
+            using var reader = new BinaryReader(new MemoryStream(_rawbytes));
+
+            var magicnumber = reader.ReadInt32();
+            var currenttime = TimeSpan.Zero;
+            var opcode = 0;
 
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
@@ -61,7 +79,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                         break;
 
                     case 0x06: // param count 7 // note
-                        var note = new Note
+                        yield return new Note
                         {
                             Timestamp = currenttime + TimeSpan.FromSeconds(1.5),
                             Button = (Note.ButtonEnum)reader.ReadInt32(),
@@ -72,9 +90,6 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                             Unknown6 = reader.ReadInt32(),
                             Unknown7 = reader.ReadInt32(),
                         };
-
-                        notes.Add(note);
-                        await console.Output.WriteLineAsync($"{note.Timestamp}, {note.Button}");
                         break;
 
                     case 0x00: reader.ReadBytes(4 * 0); break; // param count 0
@@ -184,34 +199,33 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     case 0x6A: reader.ReadBytes(4 * 2); break; // param count 2
 
                     default:
-                        throw new CommandException($"Unknown Opcode {opcode} at {reader.BaseStream.Position}");
+                        throw new Exception($"Unknown Opcode {opcode} at {reader.BaseStream.Position}");
                 }
             }
-
-            var qua = new Quaver.API.Maps.Qua();
-            qua.Title = Title;
-            qua.Artist = Artist;
-            qua.Creator = Creator;
-            qua.DifficultyName = Difficulty;
-
-            qua.AudioFile = Path.GetFileName(AudioFile);
-            qua.Mode = GameMode.Keys4;
-            qua.TimingPoints.Add(new Quaver.API.Maps.Structures.TimingPointInfo
-            {
-                Bpm = Bpm
-            });
-
-            qua.HitObjects.AddRange(notes.Select(note => new HitObjectInfo
-            {
-                StartTime = (int)note.Timestamp.TotalMilliseconds,
-                Lane = note.Button.GetLane(),
-            }));
-
-            Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
-
-            qua.Save(OutputPath);
         }
     }
 
+    internal class Note
+    {
+        public TimeSpan Timestamp { get; set; }
+        public ButtonEnum Button { get; set; }
+        public int TargetPosX { get; set; }
+        public int TargetPosY { get; set; }
+        public int StartPosX { get; set; }
+        public int StartPosY { get; set; }
+        public int Unknown6 { get; set; }
+        public int Unknown7 { get; set; }
 
+        internal enum ButtonEnum : int
+        {
+            Triangle = 0x00,
+            Circle = 0x01,
+            Cross = 0x02,
+            Square = 0x03,
+            TriangleHold = 0x04,
+            CircleHold = 0x05,
+            CrossHold = 0x06,
+            SquareHold = 0x07,
+        }
+    }
 }
