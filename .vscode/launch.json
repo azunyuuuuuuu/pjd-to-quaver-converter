@@ -12,7 +12,7 @@
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/Azunyuuuuuuu.DivaToQuaverConverter/bin/Debug/netcoreapp3.1/Azunyuuuuuuu.DivaToQuaverConverter.dll",
             "args": [
-                "--input",  "input/",
+                "--input",  "D:\\gamebox\\pdft",
                 "--output", "output/",
             ],
             "cwd": "${workspaceFolder}",

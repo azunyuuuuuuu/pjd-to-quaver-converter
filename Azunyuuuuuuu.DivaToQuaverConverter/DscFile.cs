@@ -66,6 +66,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
             var magicnumber = reader.ReadInt32();
             var currenttime = TimeSpan.Zero;
+            var noteoffset = TimeSpan.FromMilliseconds(0);
             var opcode = 0;
 
             while (reader.BaseStream.Position < reader.BaseStream.Length)
@@ -81,7 +82,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     case 0x06: // param count 7 // note
                         yield return new Note
                         {
-                            Timestamp = currenttime + TimeSpan.FromSeconds(1.5),
+                            Timestamp = currenttime + noteoffset,
                             Button = (Note.ButtonEnum)reader.ReadInt32(),
                             TargetPosX = reader.ReadInt32(),
                             TargetPosY = reader.ReadInt32(),
@@ -90,6 +91,15 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                             Unknown6 = reader.ReadInt32(),
                             Unknown7 = reader.ReadInt32(),
                         };
+                        break;
+
+                    case 0x1C:  // param count 2 // bar time set
+                        reader.ReadInt32();
+                        reader.ReadInt32();
+                        break;
+
+                    case 0x3A:
+                        noteoffset = TimeSpan.FromMilliseconds(reader.ReadInt32()); // param count 1 // target flying time
                         break;
 
                     case 0x00: reader.ReadBytes(4 * 0); break; // param count 0
@@ -118,7 +128,6 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     case 0x19: reader.ReadBytes(4 * 0); break; // param count 0
                     case 0x1A: reader.ReadBytes(4 * 2); break; // param count 2
                     case 0x1B: reader.ReadBytes(4 * 4); break; // param count 4
-                    case 0x1C: reader.ReadBytes(4 * 2); break; // param count 2
                     case 0x1D: reader.ReadBytes(4 * 2); break; // param count 2
                     case 0x1E: reader.ReadBytes(4 * 1); break; // param count 1
                     case 0x1F: reader.ReadBytes(4 * 21); break; // param count 21
@@ -148,7 +157,6 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     case 0x37: reader.ReadBytes(4 * 1); break; // param count 1
                     case 0x38: reader.ReadBytes(4 * 2); break; // param count 2
                     case 0x39: reader.ReadBytes(4 * 3); break; // param count 3
-                    case 0x3A: reader.ReadBytes(4 * 1); break; // param count 1
                     case 0x3B: reader.ReadBytes(4 * 2); break; // param count 2
                     case 0x3C: reader.ReadBytes(4 * 2); break; // param count 2
                     case 0x3D: reader.ReadBytes(4 * 4); break; // param count 4
