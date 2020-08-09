@@ -48,9 +48,20 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 foreach (var script in song.ScriptFiles)
                 {
                     console.Output.WriteLine($"     Difficulty {script.Difficulty}");
+                    if (!Directory.Exists(Path.Combine(OutputPath, song.Id)))
+                        Directory.CreateDirectory(Path.Combine(OutputPath, song.Id));
                     DscFile.ToQua(song, script, creator: DataCreator, source: DataSource)
                         .Save(Path.Combine(OutputPath, song.Id, $"{song.Id}_{script.Difficulty}.qua"));
                 }
+
+                // copy .ogg
+                File.Copy(song.AudioPath, Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg"));
+
+                // downmix with ffmpeg
+
+                // zip up
+                System.IO.Compression.ZipFile.CreateFromDirectory(Path.Combine(OutputPath, song.Id), Path.Combine(OutputPath, $"{song.Id}.qp"));
+                Directory.Delete(Path.Combine(OutputPath, song.Id), true);
             }
 
             console.Output.WriteLine($"Conversion complete!");
