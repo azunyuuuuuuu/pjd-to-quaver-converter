@@ -20,7 +20,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         public static DscFile LoadFile(string path)
             => new DscFile(File.ReadAllBytes(path));
 
-        private Qua ToQua(
+        public static Qua ToQua(
             string title,
             string artist,
             string audiofile,
@@ -52,7 +52,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             return qua;
         }
 
-        private Qua ToQua(
+        public static Qua ToQua(
             SongMetadata song,
             DscFileMetadata script,
             string creator = "SEGA",

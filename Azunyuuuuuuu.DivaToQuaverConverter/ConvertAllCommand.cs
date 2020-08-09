@@ -1,27 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
-using CliFx.Exceptions;
-using Quaver.API.Enums;
-using Quaver.API.Maps.Structures;
 
 namespace Azunyuuuuuuu.DivaToQuaverConverter
 {
-    [Command("all", Description = "Converts all files from a Project Diva game directory to Quaver.")]
+    [Command(Description = "Converts all files from a Project Diva game directory to Quaver.")]
     public class ConvertAllCommand : ICommand
     {
         private const string _regexdscfiles = @"(pv_\d{3})_(.*?)\.dsc$";
         private const string _regexoggfiles = @"(pv_\d{3})\.ogg$";
 
-        [CommandParameter(0, Description = "Path to Project Divas data directory, preferably the root.")]
-        public string InputPath { get; set; } = "input";
-        [CommandParameter(1, Description = "Where the converted files will be written to.")]
-        public string OutputPath { get; set; } = "output";
+
+        [CommandOption("input", 'i', Description = "Path to a Project Diva 'rom' directory, preferably the root.")]
+        public string InputPath { get; set; } = "./";
+        [CommandOption("output", 'o', Description = "Where the converted files will be written to.")]
+        public string OutputPath { get; set; } = "output/";
+        [CommandOption("source", 's', Description = "Where do the files come from.")]
+        public string DataSource { get; set; } = "初音ミク Project DIVA";
+        [CommandOption("creator", 'c', Description = "Who created the files.")]
+        public string DataCreator { get; set; } = "SEGA";
 
 
         public ValueTask ExecuteAsync(IConsole console)
@@ -31,10 +32,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             var dscfiles = GetDscFileMetadata();
             console.Output.WriteLine($"   Found {dscfiles.Count()} .dsc files");
 
-
             var audiofiles = GetAudioFileMetadata();
             console.Output.WriteLine($"   Found {audiofiles.Count()} .ogg files");
-
 
             var db = GetDatabaseEntries(audiofiles);
             console.Output.WriteLine($"   Found {db.Count()} database entries");
@@ -49,8 +48,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 foreach (var script in song.ScriptFiles)
                 {
                     console.Output.WriteLine($"     Difficulty {script.Difficulty}");
-
-                    ConvertDscToQua(song, script);
+                    DscFile.ToQua(song, script, creator: DataCreator, source: DataSource)
+                        .Save(Path.Combine(OutputPath, song.Id, $"{song.Id}_{script.Difficulty}.qua"));
                 }
             }
 
@@ -59,39 +58,6 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             return default;
         }
 
-        private void ConvertDscToQua(SongMetadata song, DscFileMetadata script)
-        {
-            var dscfile = DscFile.LoadFile(script.Path);
-
-            var outputpath = Path.Combine(OutputPath, song.Id, $"{song.Id}_{script.Difficulty}.qua");
-            var audiooutputpath = Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg");
-
-            var qua = new Quaver.API.Maps.Qua();
-            qua.Title = song.Title;
-            qua.Artist = song.Artist;
-            qua.Creator = "SEGA";
-            qua.DifficultyName = script.Difficulty;
-
-            qua.AudioFile = Path.GetFileName(Path.GetFileName(song.AudioPath));
-            qua.Mode = GameMode.Keys4;
-            qua.TimingPoints.Add(new Quaver.API.Maps.Structures.TimingPointInfo
-            {
-                Bpm = song.Bpm
-            });
-
-            qua.HitObjects.AddRange(dscfile.GetAllNotes()
-                .Select(note => new HitObjectInfo
-                {
-                    StartTime = (int)note.Timestamp.TotalMilliseconds,
-                    Lane = note.Button.GetLane(),
-                }));
-
-            Directory.CreateDirectory(Path.GetDirectoryName(outputpath));
-
-            if (!File.Exists(audiooutputpath))
-                File.Copy(song.AudioPath, audiooutputpath);
-            qua.Save(outputpath);
-        }
 
         private static IEnumerable<SongMetadata> GetSongMetadata(List<DscFileMetadata> dscfiles, List<AudioFileMetadata> audiofiles, List<DatabaseEntry> db)
         {
@@ -184,6 +150,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
     internal class DscFileMetadata
     {
         public string Pv { get; set; }
+
         public string Path { get; set; }
         public string Difficulty { get; set; }
     }
