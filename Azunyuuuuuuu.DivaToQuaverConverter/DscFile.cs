@@ -211,6 +211,132 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 }
             }
         }
+
+        public IEnumerable<string> GetRawScript()
+        {
+            using var reader = new BinaryReader(new MemoryStream(_rawbytes));
+
+            yield return $"MagicNumber: {reader.ReadInt32()}\n";
+
+            var opcode = 0;
+
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                opcode = reader.ReadInt32();
+
+                switch (opcode)
+                {
+                    case 0x00: yield return "END"; for (int i = 0; i < 0; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x01: yield return "TIME"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x02: yield return "MIKU_MOVE"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x03: yield return "MIKU_ROT"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x04: yield return "MIKU_DISP"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x05: yield return "MIKU_SHADOW"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x06: yield return "TARGET"; for (int i = 0; i < 7; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x07: yield return "SET_MOTION"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x08: yield return "SET_PLAYDATA"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x09: yield return "EFFECT"; for (int i = 0; i < 6; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x0A: yield return "FADEIN_FIELD"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x0B: yield return "EFFECT_OFF"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x0C: yield return "SET_CAMERA"; for (int i = 0; i < 6; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x0D: yield return "DATA_CAMERA"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x0E: yield return "CHANGE_FIELD"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x0F: yield return "HIDE_FIELD"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x10: yield return "MOVE_FIELD"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x11: yield return "FADEOUT_FIELD"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x12: yield return "EYE_ANIM"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x13: yield return "MOUTH_ANIM"; for (int i = 0; i < 5; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x14: yield return "HAND_ANIM"; for (int i = 0; i < 5; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x15: yield return "LOOK_ANIM"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x16: yield return "EXPRESSION"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x17: yield return "LOOK_CAMERA"; for (int i = 0; i < 5; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x18: yield return "LYRIC"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x19: yield return "MUSIC_PLAY"; for (int i = 0; i < 0; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x1A: yield return "MODE_SELECT"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x1B: yield return "EDIT_MOTION"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x1C: yield return "BAR_TIME_SET"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x1D: yield return "SHADOWHEIGHT"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x1E: yield return "EDIT_FACE"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x1F: yield return "MOVE_CAMERA"; for (int i = 0; i < 21; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x20: yield return "PV_END"; for (int i = 0; i < 0; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x21: yield return "SHADOWPOS"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x22: yield return "EDIT_LYRIC"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x23: yield return "EDIT_TARGET"; for (int i = 0; i < 5; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x24: yield return "EDIT_MOUTH"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x25: yield return "SET_CHARA"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x26: yield return "EDIT_MOVE"; for (int i = 0; i < 7; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x27: yield return "EDIT_SHADOW"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x28: yield return "EDIT_EYELID"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x29: yield return "EDIT_EYE"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x2A: yield return "EDIT_ITEM"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x2B: yield return "EDIT_EFFECT"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x2C: yield return "EDIT_DISP"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x2D: yield return "EDIT_HAND_ANIM"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x2E: yield return "AIM"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x2F: yield return "HAND_ITEM"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x30: yield return "EDIT_BLUSH"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x31: yield return "NEAR_CLIP"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x32: yield return "CLOTH_WET"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x33: yield return "LIGHT_ROT"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x34: yield return "SCENE_FADE"; for (int i = 0; i < 6; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x35: yield return "TONE_TRANS"; for (int i = 0; i < 6; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x36: yield return "SATURATE"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x37: yield return "FADE_MODE"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x38: yield return "AUTO_BLINK"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x39: yield return "PARTS_DISP"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x3A: yield return "TARGET_FLYING_TIME"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x3B: yield return "CHARA_SIZE"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x3C: yield return "CHARA_HEIGHT_ADJUST"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x3D: yield return "ITEM_ANIM"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x3E: yield return "CHARA_POS_ADJUST"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x3F: yield return "SCENE_ROT"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x40: yield return "MOT_SMOOTH"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x41: yield return "PV_BRANCH_MODE"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x42: yield return "DATA_CAMERA_START"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x43: yield return "MOVIE_PLAY"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x44: yield return "MOVIE_DISP"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x45: yield return "WIND"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x46: yield return "OSAGE_STEP"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x47: yield return "OSAGE_MV_CCL"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x48: yield return "CHARA_COLOR"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x49: yield return "SE_EFFECT"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x4A: yield return "EDIT_MOVE_XYZ"; for (int i = 0; i < 9; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x4B: yield return "EDIT_EYELID_ANIM"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x4C: yield return "EDIT_INSTRUMENT_ITEM"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x4D: yield return "EDIT_MOTION_LOOP"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x4E: yield return "EDIT_EXPRESSION"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x4F: yield return "EDIT_EYE_ANIM"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x50: yield return "EDIT_MOUTH_ANIM"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x51: yield return "EDIT_CAMERA"; for (int i = 0; i < 24; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x52: yield return "EDIT_MODE_SELECT"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x53: yield return "PV_END_FADEOUT"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x54: yield return "TARGET_FLAG"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x55: yield return "ITEM_ANIM_ATTACH"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x56: yield return "SHADOW_RANGE"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x57: yield return "HAND_SCALE"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x58: yield return "LIGHT_POS"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x59: yield return "FACE_TYPE"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x5A: yield return "SHADOW_CAST"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x5B: yield return "EDIT_MOTION_F"; for (int i = 0; i < 6; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x5C: yield return "FOG"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x5D: yield return "BLOOM"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x5E: yield return "COLOR_COLLE"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x5F: yield return "DOF"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x60: yield return "CHARA_ALPHA"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x61: yield return "AOTO_CAP"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x62: yield return "MAN_CAP"; for (int i = 0; i < 1; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x63: yield return "TOON"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x64: yield return "SHIMMER"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x65: yield return "ITEM_ALPHA"; for (int i = 0; i < 4; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x66: yield return "MOVIE_CUT_CHG"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x67: yield return "CHARA_LIGHT"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x68: yield return "STAGE_LIGHT"; for (int i = 0; i < 3; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x69: yield return "AGEAGE_CTRL"; for (int i = 0; i < 8; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    case 0x6A: yield return "PSE"; for (int i = 0; i < 2; i++) yield return $", {reader.ReadInt32()}"; yield return Environment.NewLine; break;
+                    default: yield return $"Unknown Opcode: {opcode}"; break;
+                }
+            }
+        }
     }
 
     internal class Note
