@@ -55,7 +55,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 }
 
                 // copy .ogg
-                File.Copy(song.AudioPath, Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg"));
+                if (!File.Exists(Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg")))
+                    File.Copy(song.AudioPath, Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg"));
 
                 // downmix with ffmpeg
 
