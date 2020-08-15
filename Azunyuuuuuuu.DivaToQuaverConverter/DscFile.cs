@@ -94,12 +94,12 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                         break;
 
                     case 0x1C:  // param count 2 // bar time set
-                        reader.ReadInt32();
-                        reader.ReadInt32();
+                        noteoffset = TimeSpan.FromSeconds((60.0f / (float)reader.ReadInt32()) * 4); // bpm
+                        reader.ReadInt32(); // unknown
                         break;
 
-                    case 0x3A:
-                        noteoffset = TimeSpan.FromMilliseconds(reader.ReadInt32()); // param count 1 // target flying time
+                    case 0x3A: // param count 1 // target flying time
+                        noteoffset = TimeSpan.FromMilliseconds(reader.ReadInt32()); // note duration in ms
                         break;
 
                     case 0x00: reader.ReadBytes(4 * 0); break; // param count 0
