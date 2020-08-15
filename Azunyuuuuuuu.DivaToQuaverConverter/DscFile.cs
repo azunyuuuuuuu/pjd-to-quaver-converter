@@ -66,7 +66,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
             var magicnumber = reader.ReadInt32();
             var currenttime = TimeSpan.Zero;
-            var noteoffset = TimeSpan.FromMilliseconds(0);
+            var noteoffset = TimeSpan.FromMilliseconds(1000);
             var opcode = 0;
 
             while (reader.BaseStream.Position < reader.BaseStream.Length)
