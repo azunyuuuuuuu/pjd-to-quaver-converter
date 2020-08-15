@@ -17,15 +17,19 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             switch (button)
             {
                 case ButtonEnum.Square:
+                case ButtonEnum.SquareDouble:
                 case ButtonEnum.SquareHold:
                     return 1;
                 case ButtonEnum.Cross:
+                case ButtonEnum.CrossDouble:
                 case ButtonEnum.CrossHold:
                     return 2;
                 case ButtonEnum.Triangle:
+                case ButtonEnum.TriangleDouble:
                 case ButtonEnum.TriangleHold:
                     return 3;
                 case ButtonEnum.Circle:
+                case ButtonEnum.CircleDouble:
                 case ButtonEnum.CircleHold:
                     return 4;
                 default:

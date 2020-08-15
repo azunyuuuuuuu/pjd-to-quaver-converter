@@ -47,7 +47,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 {
                     StartTime = (int)note.Timestamp.TotalMilliseconds,
                     Lane = note.Button.GetLane(),
-                }));
+                })
+                .Where(x => x.Lane > 0));
 
             return qua;
         }
@@ -58,7 +59,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             string creator = "SEGA",
             string source = "Project Diva")
             => ToQua(song.Title, song.Artist, Path.GetFileName(Path.GetFileName(song.AudioPath)), (int)song.Bpm,
-                DscFile.LoadFile(script.Path).GetAllNotes(), creator, source, script.Difficulty);
+                DscFile.LoadFile(script.Path).GetAllNotes().Where(x => x.Button > 0), creator, source, script.Difficulty);
 
         public IEnumerable<Note> GetAllNotes()
         {
@@ -352,14 +353,21 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
         internal enum ButtonEnum : int
         {
-            Triangle = 0x00,
-            Circle = 0x01,
-            Cross = 0x02,
-            Square = 0x03,
-            TriangleHold = 0x04,
-            CircleHold = 0x05,
-            CrossHold = 0x06,
-            SquareHold = 0x07,
+            Triangle = 0,
+            Circle = 1,
+            Cross = 2,
+            Square = 3,
+            TriangleDouble = 4,
+            CircleDouble = 5,
+            CrossDouble = 6,
+            SquareDouble = 7,
+            TriangleHold = 8,
+            CircleHold = 9,
+            CrossHold = 10,
+            SquareHold = 11,
+            Star = 12,
+            StarHold = 14,
+            ChanceStar = 15,
         }
     }
 }
