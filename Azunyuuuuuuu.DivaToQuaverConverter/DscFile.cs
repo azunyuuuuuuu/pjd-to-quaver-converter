@@ -101,6 +101,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
                     case 0x3A: // param count 1 // target flying time
                         noteoffset = TimeSpan.FromMilliseconds(reader.ReadInt32()); // note duration in ms
+                        // bpm = ((60 * 4) / (float)reader.ReadInt32()) * 1000; // TODO: still needs implementation
                         break;
 
                     case 0x00: reader.ReadBytes(4 * 0); break; // param count 0
