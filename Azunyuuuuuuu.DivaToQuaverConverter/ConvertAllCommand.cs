@@ -25,7 +25,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         public string DataCreator { get; set; } = "SEGA";
 
 
-        public ValueTask ExecuteAsync(IConsole console)
+        public async ValueTask ExecuteAsync(IConsole console)
         {
             console.Output.WriteLine($" - Processing all data...");
 
@@ -55,10 +55,21 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 }
 
                 // copy .ogg
-                if (!File.Exists(Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg")))
-                    File.Copy(song.AudioPath, Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg"));
+                string audiofilepath = Path.Combine(OutputPath, song.Id, $"{song.Id}.ogg");
+                // if (!File.Exists(audiofilepath))
+                //     File.Copy(song.AudioPath, audiofilepath);
 
                 // downmix with ffmpeg
+                // ffmpeg -hide_banner -loglevel fatal -i "temp.ogg" -ac 2 "$path"
+                var result = await CliWrap.Cli.Wrap("ffmpeg")
+                    .WithArguments(x => x
+                        .Add("-hide_banner")
+                        .Add("-loglevel").Add("fatal")
+                        .Add("-i").Add(song.AudioPath)
+                        .Add("-ac").Add("2")
+                        .Add(audiofilepath)
+                        )
+                    .ExecuteAsync();
 
                 // zip up
                 System.IO.Compression.ZipFile.CreateFromDirectory(Path.Combine(OutputPath, song.Id), Path.Combine(OutputPath, $"{song.Id}.qp"));
@@ -67,7 +78,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
             console.Output.WriteLine($"Conversion complete!");
 
-            return default;
+            // return default;
         }
 
 
