@@ -61,18 +61,22 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
 
                 // downmix with ffmpeg
                 // ffmpeg -hide_banner -loglevel fatal -i "temp.ogg" -ac 2 "$path"
-                var result = await CliWrap.Cli.Wrap("ffmpeg")
-                    .WithArguments(x => x
-                        .Add("-hide_banner")
-                        .Add("-loglevel").Add("fatal")
-                        .Add("-i").Add(song.AudioPath)
-                        .Add("-ac").Add("2")
-                        .Add(audiofilepath)
-                        )
-                    .ExecuteAsync();
+                if (!File.Exists(audiofilepath))
+                    await CliWrap.Cli.Wrap("ffmpeg")
+                        .WithArguments(x => x
+                            .Add("-hide_banner")
+                            .Add("-loglevel").Add("fatal")
+                            .Add("-i").Add(song.AudioPath)
+                            .Add("-ac").Add("2")
+                            .Add(audiofilepath)
+                            )
+                        .ExecuteAsync();
 
                 // zip up
-                System.IO.Compression.ZipFile.CreateFromDirectory(Path.Combine(OutputPath, song.Id), Path.Combine(OutputPath, $"{song.Id}.qp"));
+                string archivepath = Path.Combine(OutputPath, $"{song.Id}.qp");
+                if (File.Exists(archivepath))
+                    File.Delete(archivepath);
+                System.IO.Compression.ZipFile.CreateFromDirectory(Path.Combine(OutputPath, song.Id), archivepath);
                 Directory.Delete(Path.Combine(OutputPath, song.Id), true);
             }
 
