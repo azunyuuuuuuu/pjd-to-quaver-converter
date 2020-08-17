@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -72,12 +72,12 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                             )
                         .ExecuteAsync();
 
-                // zip up
-                string archivepath = Path.Combine(OutputPath, $"{song.Id}.qp");
-                if (File.Exists(archivepath))
-                    File.Delete(archivepath);
-                System.IO.Compression.ZipFile.CreateFromDirectory(Path.Combine(OutputPath, song.Id), archivepath);
-                Directory.Delete(Path.Combine(OutputPath, song.Id), true);
+                // // zip up
+                // string archivepath = Path.Combine(OutputPath, $"{song.Id}.qp");
+                // if (File.Exists(archivepath))
+                //     File.Delete(archivepath);
+                // System.IO.Compression.ZipFile.CreateFromDirectory(Path.Combine(OutputPath, song.Id), archivepath);
+                // Directory.Delete(Path.Combine(OutputPath, song.Id), true);
             }
 
             console.Output.WriteLine($"Conversion complete!");
