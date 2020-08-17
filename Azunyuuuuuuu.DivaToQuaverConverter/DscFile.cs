@@ -28,7 +28,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             IEnumerable<Note> notes,
             string creator = "SEGA",
             string source = "Project Diva",
-            string difficulty = "Not defined")
+            string difficulty = "Not defined",
+            TimeSpan previewtime = new TimeSpan())
         {
             var qua = new Qua()
             {
@@ -39,6 +40,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                 Source = source,
                 Mode = GameMode.Keys4,
                 DifficultyName = difficulty,
+                SongPreviewTime = (int)previewtime.TotalMilliseconds,
             };
 
             qua.TimingPoints.Add(new TimingPointInfo { Bpm = bpm });
@@ -57,9 +59,10 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
             SongMetadata song,
             DscFileMetadata script,
             string creator = "SEGA",
-            string source = "Project Diva")
+            string source = "Project Diva",
+            TimeSpan previewtime = new TimeSpan())
             => ToQua(song.Title, song.Artist, Path.GetFileName(Path.GetFileName(song.AudioPath)), (int)song.Bpm,
-                DscFile.LoadFile(script.Path).GetAllNotes(), creator, source, script.Difficulty);
+                DscFile.LoadFile(script.Path).GetAllNotes(), creator, source, script.Difficulty, previewtime);
 
         public IEnumerable<Note> GetAllNotes()
         {

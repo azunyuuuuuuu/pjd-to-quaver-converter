@@ -1,8 +1,10 @@
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Globalization;
 using CliFx;
 using CliFx.Attributes;
 
@@ -50,7 +52,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     console.Output.WriteLine($"     Difficulty {script.Difficulty}");
                     if (!Directory.Exists(Path.Combine(OutputPath, song.Id)))
                         Directory.CreateDirectory(Path.Combine(OutputPath, song.Id));
-                    DscFile.ToQua(song, script, creator: DataCreator, source: DataSource)
+                    DscFile.ToQua(song, script, creator: DataCreator, source: DataSource, previewtime: song.PreviewTime)
                         .Save(Path.Combine(OutputPath, song.Id, $"{song.Id}_{script.Difficulty}.qua"));
                 }
 
@@ -96,6 +98,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     Title = db.FirstOrDefault(entry => entry.Group == audio.Pv).SongName,
                     Artist = db.FirstOrDefault(entry => entry.Group == audio.Pv).Artist,
                     Bpm = db.FirstOrDefault(entry => entry.Group == audio.Pv).Bpm,
+                    PreviewTime = db.FirstOrDefault(entry => entry.Group == audio.Pv).PreviewStart,
                     AudioPath = audio.Path,
                     ScriptFiles = dscfiles.Where(dsc => audio.Pv == dsc.Pv).ToList(),
                 });
@@ -122,6 +125,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
                     SongName = x.FirstOrDefault(c => c.Property == "song_name").Value,
                     Artist = x.FirstOrDefault(c => c.Property == "songinfo.music").Value,
                     Bpm = float.Parse(x.FirstOrDefault(c => c.Property == "bpm").Value),
+                    PreviewStart = TimeSpan.FromSeconds(float.Parse(x.FirstOrDefault(c => c.Property == "sabi.start_time").Value, CultureInfo.InvariantCulture.NumberFormat)),
+                    PreviewDuration = TimeSpan.FromSeconds(float.Parse(x.FirstOrDefault(c => c.Property == "sabi.play_time").Value, CultureInfo.InvariantCulture.NumberFormat)),
                 }).OrderBy(x => x.Group).ToList();
             return db;
         }
@@ -156,6 +161,7 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         public string Title { get; set; }
         public string Artist { get; set; }
         public float Bpm { get; set; }
+        public TimeSpan PreviewTime { get; set; }
         public string AudioPath { get; set; }
         public List<DscFileMetadata> ScriptFiles { get; set; }
     }
@@ -166,6 +172,8 @@ namespace Azunyuuuuuuu.DivaToQuaverConverter
         public string SongName { get; set; }
         public string Artist { get; set; }
         public float Bpm { get; set; }
+        public TimeSpan PreviewStart { get; set; }
+        public TimeSpan PreviewDuration { get; set; }
     }
 
     internal class AudioFileMetadata
